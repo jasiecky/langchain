@@ -138,6 +138,7 @@ __all__ = [
     "ListPowerBITool",
     "ListSQLDatabaseTool",
     "ListSparkSQLTool",
+    "MCPDiscoveryTool",
     "MerriamWebsterQueryRun",
     "MetaphorSearchResults",
     "MoveFileTool",
