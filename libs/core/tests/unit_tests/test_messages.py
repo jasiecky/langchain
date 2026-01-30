@@ -1358,3 +1358,64 @@ def test_text_accessor() -> None:
     assert empty_msg.text == ""
     assert empty_msg.text == ""
     assert str(empty_msg.text) == str(empty_msg.text)
+
+
+
+def test_tool_message_content_none_coerced_to_empty_string():
+    """content=None should be coerced to empty string."""
+    msg = ToolMessage(content=None, tool_call_id="test-id")
+
+    assert msg.content == ""
+    assert isinstance(msg.content, str)
+
+
+def test_tool_message_no_content_defaults_to_empty_string():
+    """Omitted content should default to empty string."""
+    msg = ToolMessage(tool_call_id="test-id")
+
+    assert msg.content == ""
+
+
+def test_tool_message_content_blocks_override_none():
+    """content_blocks should override content=None."""
+    content_blocks = ["hello", {"type": "text", "text": "world"}]
+
+    msg = ToolMessage(
+        content=None,
+        content_blocks=content_blocks,
+        tool_call_id="test-id",
+    )
+
+    assert msg.content == content_blocks
+
+
+def test_tool_message_none_content_and_non_string_tool_call_id():
+    """Non-string tool_call_id should be coerced to string even with content=None."""
+    msg = ToolMessage(content=None, tool_call_id=123)
+
+    assert msg.content == ""
+    assert msg.tool_call_id == "123"
+
+
+def test_tool_message_none_content_with_uuid_tool_call_id():
+    """UUID tool_call_id should be coerced to string."""
+    tool_call_id = uuid.UUID("12345678-1234-5678-1234-567812345678")
+
+    msg = ToolMessage(content=None, tool_call_id=tool_call_id)
+
+    assert msg.content == ""
+    assert msg.tool_call_id == str(tool_call_id)
+
+
+def test_tool_message_none_content_with_other_fields():
+    """content=None should not affect other fields."""
+    msg = ToolMessage(
+        content=None,
+        tool_call_id="test-id",
+        status="success",
+        artifact={"result": 42},
+    )
+
+    assert msg.content == ""
+    assert msg.status == "success"
+    assert msg.artifact == {"result": 42}
